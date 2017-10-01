@@ -1,0 +1,29 @@
+{
+  "scope": "@weakenedplayer",
+  "name": "@weakenedplayer/screenshot-bot",
+  "version": "0.0.0-beta.0",
+  "description": "Discord client for screenshot posting.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build-test": "tsc --p tsconfig.test.json",
+    "test": "npm run build-test && node dist-test\\test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WeakenedPlayer/screenshot-bot.git"
+  },
+  "keywords": [
+    "node.js",
+    "discord.js"
+  ],
+  "author": "WeakenedPlayer",
+  "license": "MIT",
+  "dependencies": {
+    "@types/chokidar": "^1.7.3",
+    "chokidar": "^1.7.0",
+    "discord.js": "^11.2.1",
+    "rxjs": "~5.4.0",
+    "sharp": "^0.18.4"
+  }
+}
