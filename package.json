@@ -1,7 +1,7 @@
 {
   "scope": "@weakenedplayer",
   "name": "@weakenedplayer/screenshot-bot",
-  "version": "0.0.0-beta.3",
+  "version": "0.0.1",
   "description": "Discord client for screenshot posting.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "build-all": "npm run build && npm run build-test",
     "test": "npm run build-test && node dist-test\\test",
     "publish": "npm publish --access=public",
-    "beta-publish": "npm publish --access=public --tag=beta"
+    "beta-publish": "npm publish --tag beta --access=public"
   },
   "repository": {
     "type": "git",
