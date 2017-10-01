@@ -1,8 +1,6 @@
 import { ScreenshotBot } from '../src';
 
-// token -> https://discordapp.com/developers/applications/me/<client id>
-const token = 'your token here';
-
+const token = require('./token');
 console.log( 'Login to token <' + token + '>' );
 
 let bot = new ScreenshotBot();
@@ -14,7 +12,7 @@ bot.app$.map( app => {
 } ).take(2).subscribe();
 
 
-bot.channel$.map( channels => { 
+bot.textChannel$.map( channels => { 
     console.log( '----channels-------------' );
     console.log( channels );
     console.log( '-------------------------' );
@@ -31,5 +29,10 @@ bot.registerListener( 'ready', () => {
     console.log( 'end.' );
 } );
 
-bot.login( token );
+bot.login( token ).catch( err => { 
+    console.log( '-------------------------' );
+    console.log( 'login failed: check your tokne is valid.');
+    console.log( '-------------------------' );
+    console.log( err );
+} );
 

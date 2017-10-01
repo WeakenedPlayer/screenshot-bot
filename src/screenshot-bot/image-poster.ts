@@ -1,8 +1,7 @@
+import * as Discord from 'discord.js';
 import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Client, ClientComponent } from '../client';
-import * as Discord from 'discord.js';
 import { JpegGenerator, JpegOutputOption } from '../image';
-
 export { JpegOutputOption };
 
 export class ImagePoster implements ClientComponent {
@@ -27,6 +26,7 @@ export class ImagePoster implements ClientComponent {
         this.imageGeneratorSubject.next( new JpegGenerator( filter, dst, option ) );
     }
     
+    // 指定されたチャネルIDへ、画像の投稿を開始する
     startPostingTo( channelId: string ) {
         this.stopPosting();
         this.channelId = channelId;
@@ -34,15 +34,17 @@ export class ImagePoster implements ClientComponent {
         .map( ( img :string )=> {
             let client = this.discordClient;
             if( client ) {
-                // To prevent tsc error, channel specified as "any"
+                // tscでエラーが出るのを防止するため、あえて "any" として扱う。
+                // TextChannel 以外は無視(エラーは出さない)
                 let channel: any = client.channels.find( 'id', channelId );
                 if( channel && channel.type === 'text' ) {
                     channel.send( '', { file: { attachment: img } } );                
-                }
+                } 
             }
         } ).subscribe() );
     }
-    
+
+    // 画像の投稿を停止する
     stopPosting() {
         if( !this.subscription.closed ){
             this.subscription.unsubscribe();
@@ -56,6 +58,7 @@ export class ImagePoster implements ClientComponent {
     }
     
     onClientDestroy() {
+        this.stopPosting();
         this.discordClient = null;
     }
 }

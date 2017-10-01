@@ -2,26 +2,12 @@ import { Observable, BehaviorSubject  } from 'rxjs';
 import { Client, ClientComponent } from '../client';
 import * as Discord from 'discord.js';
 
-export class OAuth2App {
-    constructor( 
-        public readonly id: string,
-        public readonly name: string,
-        public readonly description: string,
-        public readonly iconUrl: string,
-        public readonly isPublic: boolean
-    ){}
-}
-
-export class OAuth2AppObservable implements ClientComponent {
+export class OAuth2ApplicationObservable implements ClientComponent {
     private discordClient: Discord.Client = null;
-    private subject: BehaviorSubject<OAuth2App>;
-    private app: OAuth2App = null;
+    private subject: BehaviorSubject<Discord.OAuth2Application>;
+    private app: Discord.OAuth2Application = null;
     
     get app$() { return this.subject.asObservable() }
-    
-    fromApp( app: Discord.OAuth2Application ): OAuth2App {
-        return new OAuth2App( app.id, app.name, app.description, app.iconURL, app.botPublic );
-    }
 
     constructor( private client: Client ) {
         this.subject = new BehaviorSubject( this.app );
@@ -33,8 +19,8 @@ export class OAuth2AppObservable implements ClientComponent {
     
     private onReady() {
         this.discordClient.fetchApplication()
-        .then( ( app ) => {
-            this.app = this.fromApp( app ); 
+        .then( ( app: Discord.OAuth2Application ) => {
+            this.app = app;
             this.update();
         } );
     }

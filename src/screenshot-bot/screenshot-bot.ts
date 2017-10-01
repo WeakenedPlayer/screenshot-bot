@@ -1,6 +1,6 @@
-import { Client } from '../client';
-import { ChannelObservable, GuildObservable, OAuth2AppObservable, ImagePoster, JpegOutputOption, Channel, Guild, OAuth2App } from '.';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { ImagePoster, JpegOutputOption } from '.';
+import { Bot } from '../bot';
 
 export class ScreenshotBotState {
     constructor( 
@@ -15,16 +15,10 @@ export class ScreenshotBotOption {
                  public readonly jpegOption?: JpegOutputOption ) {}
 }
 
-export class ScreenshotBot extends Client {
-    private channelObservable: ChannelObservable;
-    private guildObservable: GuildObservable;
-    private appObservable: OAuth2AppObservable;
+export class ScreenshotBot extends Bot {
     private imagePoster: ImagePoster;
     private stateSubject: BehaviorSubject<ScreenshotBotState>;
 
-    get channel$() { return this.channelObservable.channel$; }
-    get guild$() { return this.guildObservable.guild$; } 
-    get app$() { return this.appObservable.app$; }
     get image$() { return this.imagePoster.image$ }
     get screenBotState$() { return this.stateSubject.asObservable() }
 
@@ -38,15 +32,7 @@ export class ScreenshotBot extends Client {
     
     constructor(){
         super();
-        this.channelObservable = new ChannelObservable( this );
-        this.guildObservable = new GuildObservable( this );
-        this.appObservable = new OAuth2AppObservable( this );
         this.imagePoster = new ImagePoster( this );
-
-        this.addComponent( this.channelObservable );
-        this.addComponent( this.guildObservable );
-        this.addComponent( this.appObservable );
-        this.addComponent( this.imagePoster );
         this.init();
         
         // state

@@ -2,23 +2,13 @@ import { Observable, BehaviorSubject  } from 'rxjs';
 import { Client, ClientComponent } from '../client';
 import * as Discord from 'discord.js';
 
-export class Guild {
-    constructor( 
-            public readonly id: string,
-            public readonly name: string
-    ){}
-}
-
 export class GuildObservable implements ClientComponent {
     private discordClient: Discord.Client = null;
-    private subject: BehaviorSubject<{ [id:string]: Guild }>;
-    private guilds: { [id:string]: Guild } = {};
+    private subject: BehaviorSubject<{ [id:string]: Discord.Guild }>;
+    private guilds: { [id:string]: Discord.Guild } = {};
     
     get guild$() { return this.subject.asObservable() }
     
-    fromGuild( guild: Discord.Guild ): Guild {
-        return new Guild( guild.id, guild.name );
-    }
 
     constructor( private client: Client ) {
         this.subject = new BehaviorSubject( this.guilds );
@@ -30,14 +20,14 @@ export class GuildObservable implements ClientComponent {
     
     private onReady() {
         this.discordClient.guilds.map( ( guild ) => {
-            this.guilds[ guild.id ] = this.fromGuild( guild );
+            this.guilds[ guild.id ] = guild;
         } );
         this.update();
     }
     
     private onGuildCreate( guild: Discord.Guild ) {
         console.log('create');
-        this.guilds[ guild.id ] = this.fromGuild( guild );
+        this.guilds[ guild.id ] = guild;
         this.update();
     }
 
@@ -48,9 +38,8 @@ export class GuildObservable implements ClientComponent {
     }
     
     private onGuildUpdate( oldGuild: Discord.Guild, newGuild: Discord.Guild ) {
-        // same as create
         console.log('update');
-        this.guilds[ newGuild.id ] = this.fromGuild( newGuild );
+        this.guilds[ newGuild.id ] = newGuild;
         this.update();
     }
     
