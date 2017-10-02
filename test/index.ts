@@ -1,4 +1,4 @@
-import { ScreenshotBot } from '../src';
+import { ScreenshotBot } from '../src/main';
 
 const token = require('./token');
 console.log( 'Login to token <' + token + '>' );
