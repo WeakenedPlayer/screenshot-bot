@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs';
 import { ImageProvider } from './image';
 import { ImageWatcher } from './image-watcher';
-import { JpegConverter, JpegOutputOption } from './jpeg-converter';
+import { JpegConverter } from './jpeg-converter';
+import { JpegOutputOption } from './jpeg-output-option';
 
 export class JpegGenerator implements ImageProvider {
     private watcher: ImageWatcher;

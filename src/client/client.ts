@@ -1,11 +1,6 @@
 import { Observable, BehaviorSubject  } from 'rxjs';
+import { ClientState } from './client-state';
 import * as Discord from 'discord.js';
-
-export class ClientState {
-    constructor( public readonly ready: boolean = false,
-                 public readonly busy: boolean = false,
-                 public readonly connected: boolean = false ) {}
-}
 
 export interface ClientComponent {
     onClientInit( discordClient: Discord.Client ): void;

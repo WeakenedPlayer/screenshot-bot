@@ -10,3 +10,4 @@ Thumbs.db
 # Dist #
 /dist
 /dist-test
+/test/token.ts
