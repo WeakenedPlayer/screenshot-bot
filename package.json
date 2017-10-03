@@ -7,9 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "npm run build && node test\\test",
-    "publish": "npm publish --access=public",
-    "beta-publish": "npm publish --tag beta --access=public"
+    "test": "npm run build && node dist\\test"
   },
   "repository": {
     "type": "git",
