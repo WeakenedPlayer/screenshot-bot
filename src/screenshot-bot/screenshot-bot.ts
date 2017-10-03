@@ -15,6 +15,10 @@ export class ScreenshotBot extends Bot {
     private channelIdSubject = new BehaviorSubject<string>( '' );
     private optionSubject = new BehaviorSubject<ScreenshotBotOption>( new ScreenshotBotOption() ); 
     
+    get active$() { return this.activeSubject.asObservable() }
+    get channelId$() { return this.channelIdSubject.asObservable() }
+    get option$() { return this.optionSubject.asObservable() }
+
     constructor(){
         super();
         this.imagePoster = new ImagePoster( this );
