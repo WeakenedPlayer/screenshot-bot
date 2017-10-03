@@ -4,13 +4,13 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
-    "outDir": "./",
+    "outDir": "./dist",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "lib": [ "dom", "es6" ],
     "typeRoots": [ "node_modules/@types" ]
   },
-  "include": [ "src/**/*" ],
+  "include": [ "src/**/*", "test/**/*" ],
   "exclude": [ "node_modules", "dist" ]
 }

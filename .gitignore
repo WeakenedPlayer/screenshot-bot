@@ -8,8 +8,5 @@ Thumbs.db
 /node_modules
 
 # Dist #
-/test
-/main
-/common
-index.*
-/src/test/token.ts
+/test/token.ts
+/dist/*
