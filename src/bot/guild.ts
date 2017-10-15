@@ -26,19 +26,19 @@ export class GuildObservable implements ClientComponent {
     }
     
     private onGuildCreate( guild: Discord.Guild ) {
-        console.log('create');
+        // console.log('create');
         this.guilds[ guild.id ] = guild;
         this.update();
     }
 
     private onGuildDelete( guild: Discord.Guild ) {
-        console.log('delete');
+        // console.log('delete');
         this.guilds[ guild.id ] = null;
         this.update();
     }
     
     private onGuildUpdate( oldGuild: Discord.Guild, newGuild: Discord.Guild ) {
-        console.log('update');
+        // console.log('update');
         this.guilds[ newGuild.id ] = newGuild;
         this.update();
     }

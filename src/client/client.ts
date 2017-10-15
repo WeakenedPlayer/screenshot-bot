@@ -30,7 +30,7 @@ export class Client {
     
     // clientの状態変化に伴うstateの変更
     private onReady() {
-        console.log( 'ready');
+        // console.log( 'ready');
         this.ready = true;;
         this.busy = false;
         this.connected = true;
@@ -38,21 +38,21 @@ export class Client {
     }
     
     private onDisconnect() {
-        console.log( 'disconnect' );
+        // console.log( 'disconnect' );
         this.busy = false;
         this.connected = false;
         this.updateState();
     }
     
     private onResume() {
-        console.log( 'resume');
+        // console.log( 'resume');
         this.busy = false;
         this.connected = true;
         this.updateState();
     }
     
     private onReconnecting() {
-        console.log( 'reconnecting');
+        // console.log( 'reconnecting');
         this.busy = true;
         this.connected = false;
         this.updateState();
@@ -65,7 +65,7 @@ export class Client {
     registerListener( event: string, callback: any ) {
         this.client.on( event, callback );
         this.events[ event ] = true;
-        console.log( 'add listener: ' + event)
+        // console.log( 'add listener: ' + event)
     }
     
     protected addComponent( component: ClientComponent ) {
@@ -103,7 +103,7 @@ export class Client {
     
     private destroy() {
         for( let event in this.events ) {
-            console.log( 'remove listener: ' + event );
+            // console.log( 'remove listener: ' + event );
             this.client.removeAllListeners( event );
         }
         this.onDestroyClient();
@@ -115,7 +115,7 @@ export class Client {
         }
         this.busy = true;
         this.updateState();
-        console.log( 'login started...');
+        // console.log( 'login started...');
         return this.client.login( token );
     }
 
@@ -123,7 +123,7 @@ export class Client {
         if( this.busy ) {
             return Promise.reject( 'client is busy.' );
         }
-        console.log( 'logout started...');
+        // console.log( 'logout started...');
         this.busy = true;
         this.updateState();
         this.destroy();
