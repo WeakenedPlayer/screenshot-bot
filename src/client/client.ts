@@ -101,7 +101,7 @@ export class Client {
         this.updateState();
     }
     
-    private destroy() {
+    destroy() {
         for( let event in this.events ) {
             // console.log( 'remove listener: ' + event );
             this.client.removeAllListeners( event );
