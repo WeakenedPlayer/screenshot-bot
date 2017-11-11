@@ -23,7 +23,7 @@ export class ImagePoster implements ClientComponent {
     }
     
     configureWatcher( filter: string, dst: string, option?: JpegOutputOption ) {
-        this.imageGeneratorSubject.next( new JpegGenerator( filter, dst, option ) );
+        this.imageGeneratorSubject.next( new JpegGenerator( filter, dst, null, option ) );
     }
     
     // 指定されたチャネルIDへ、画像の投稿を開始する
@@ -33,6 +33,8 @@ export class ImagePoster implements ClientComponent {
         this.subscription.add( this.imageObservable
         .map( ( img :string )=> {
             let client = this.discordClient;
+            console.log( 'image-poster/subscribe' );
+            
             if( client ) {
                 // tscでエラーが出るのを防止するため、あえて "any" として扱う。
                 // TextChannel 以外は無視(エラーは出さない)

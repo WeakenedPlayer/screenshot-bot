@@ -3,13 +3,14 @@ import { Observable, BehaviorSubject } from 'rxjs';
 
 export class Watcher {
     private watcher: FSWatcher = null;
-    private observable: Observable<string>;
+
     private addObservable: Observable<string>;
     private changeObservable: Observable<string>;
     private unlinkObservable: Observable<string>;
     private addDirObservable: Observable<string>;
     private unlinkDirObservable: Observable<string>;
 
+   
     get add$(): Observable<string> { return this.addObservable }
     get change$(): Observable<string> { return this.changeObservable }
     get unlink$(): Observable<string> { return this.unlinkObservable }
@@ -33,6 +34,9 @@ export class Watcher {
     }
     
     constructor( private path: string ) {
+        /* TENATIVE: この時点で監視を開始している。
+         * 一つのWatcherで1つの対象しか監視しない前提で作成する。(外部のFSWatcherを使うDIに変更すべきかも)
+         * */
         this.watcher = watch( this.path, {
             ignoreInitial: true,
             followSymlinks: false,
@@ -42,10 +46,11 @@ export class Watcher {
                 pollInterval: 200
               },
         });
-        this.addObservable = this.toObservable( 'add' ).publish().refCount();
-        this.changeObservable = this.toObservable( 'change' ).publish().refCount();
-        this.unlinkObservable = this.toObservable( 'unlink' ).publish().refCount();
-        this.addDirObservable = this.toObservable( 'addDir' ).publish().refCount();
-        this.unlinkDirObservable = this.toObservable( 'unlinkDir' ).publish().refCount();
+        
+        this.addObservable = this.toObservable( 'add' );
+        this.changeObservable = this.toObservable( 'change' );
+        this.unlinkObservable = this.toObservable( 'unlink' );
+        this.addDirObservable = this.toObservable( 'addDir' );
+        this.unlinkDirObservable = this.toObservable( 'unlinkDir' );
     }
 }

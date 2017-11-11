@@ -1,38 +1,56 @@
-import { ScreenshotBot } from '../src/screenshot-bot';
+import { JpegGenerator } from '../src';
+import { Subject, Subscription, Observable } from 'rxjs';
 
-const token = require('./token');
-console.log( 'Login to token <' + token + '>' );
+import { srcDir, tmpDir } from './constants';
 
-let bot = new ScreenshotBot();
+console.log( 'Monitoring: ' + srcDir );
 
-bot.app$.map( app => { 
-    console.log( '----app------------------' );
-    console.log( app );
-    console.log( '-------------------------' );
-} ).take(2).subscribe();
+let toggle = false;
+let condition = new Subject<boolean>();
+let watcher = new JpegGenerator( srcDir, tmpDir, condition );
 
+watcher.image$.map( image => { console.log( image ) } ).subscribe();
 
-bot.textChannel$.map( channels => { 
-    console.log( '----channels-------------' );
-    console.log( channels );
-    console.log( '-------------------------' );
-} ).take(2).subscribe();
+setInterval( ()=>{
+    if( toggle ) {
+        toggle = false;
+    } else {
+        toggle = true;
+    }
+    condition.next( toggle );
+    console.log( toggle );
+}, 5000 );
 
-bot.guild$.map( guilds => {
-    console.log( '----guilds---------------' );
-    console.log( guilds );
-    console.log( '-------------------------' );
-} ).take(2).subscribe();
+/*
+//Import the discord.js module
+const Discord = require('discord.js');
 
-bot.registerListener( 'ready', () => {
-    bot.logout();
-    console.log( 'end.' );
-} );
+//Create an instance of a Discord client
+const client = new Discord.Client();
 
-bot.login( token ).catch( err => { 
-    console.log( '-------------------------' );
-    console.log( 'login failed: check your tokne is valid.');
-    console.log( '-------------------------' );
-    console.log( err );
-} );
+//The token of your bot - https://discordapp.com/developers/applications/me
+
+//The ready event is vital, it means that your bot will only start reacting to information
+//from Discord _after_ ready is emitted
+client.on('ready', () => {
+console.log('I am ready!');
+});
+
+//Create an event listener for messages
+client.on('message', message => {
+ // If the message is "what is my avatar"
+    if (message.content === 'what is my avatar') {
+      // Send the user's avatar URL
+      message.reply(message.author.avatarURL);
+    }
+ // If the message is "what is my avatar"
+    if (message.content === 'quit') {
+        client.destroy();
+        process.exit();
+    }
+});
+
+//Log our bot in
+client.login(token);
+*/
 
