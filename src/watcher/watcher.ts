@@ -28,6 +28,7 @@ export class Watcher {
 
             // remove listener when unsubscribe
             return ( () => {
+                console.log( 'Watcher: Event removed.' );
                 this.watcher.removeListener( event, listener );
             } );
         } ).publish().refCount();
@@ -45,12 +46,20 @@ export class Watcher {
                 stabilityThreshold: 1000,
                 pollInterval: 200
               },
-        });
+        } );
         
         this.addObservable = this.toObservable( 'add' );
         this.changeObservable = this.toObservable( 'change' );
         this.unlinkObservable = this.toObservable( 'unlink' );
         this.addDirObservable = this.toObservable( 'addDir' );
         this.unlinkDirObservable = this.toObservable( 'unlinkDir' );
+    }
+    
+    unwatch( path: string ) {
+        this.watcher.unwatch( path );      
+    }
+
+    watch( path: string ) {
+        this.watcher.add( path );
     }
 }

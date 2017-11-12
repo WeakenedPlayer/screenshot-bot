@@ -2,32 +2,25 @@ import { Observable } from 'rxjs';
 import { Watcher } from '../watcher';
 import { ImageProvider } from './image';
 
-/* TENTATIVE: Watcherの制約上、フォルダ監視が常時有効なので、フィルタ機能を付ける */
-
 export class ImageWatcher implements ImageProvider {
-    private watcher: Watcher = null;
-    private condition: Observable<boolean>;
-    constructor( private filter: string, condition?: Observable<boolean> ) {
-        this.watcher = new Watcher( filter );
-        
-        if( condition ) {
-            this.condition = condition;
-        } else {
-            this.condition = Observable.of( true );
-        }
+    private watcher: Watcher = new Watcher('');
+    private watcher$: Observable<string>;
+    private lastFilter: string = '';
+    constructor( private filter$: Observable<string> ) {
+        // Memo: 最後のObservable を共有できるよう shareReplay にしている。
+        this.watcher$ = this.filter$.flatMap( filter => {
+            console.log( 'Unwatch: ' + this.lastFilter );
+            this.watcher.unwatch( this.lastFilter );
+            this.watcher.watch( filter );
+            this.lastFilter = filter;
+            // Memo: Observable は 完了条件が成立しない限り購読が止まらないので、
+            //       繰り返すと同じ購読が増えてしまう。
+            //       ここでは、takeUntil で完了させるようにしている。
+            return this.watcher.add$.takeUntil( this.filter$ );
+        } ).shareReplay( 1 );
     }
 
     get image$(): Observable<string> {
-        /* condition が true だけ、ファイルの追加を通知する。 */
-        return this.watcher.add$
-//        .map( ( image ) => {
-//            console.log( 'added: ' + image );
-//            return image;
-//        } )
-        .withLatestFrom( this.condition )
-        .filter( ( [ image, condition] )  => condition )
-        .map( ( [ image, condition] ) => {
-            return image;
-        } );
+        return this.watcher$;
     }
 }

@@ -8,6 +8,6 @@ Thumbs.db
 /node_modules
 
 # Dist #
-/test/token.ts
+/test/constants.ts
 /dist/*
 /type/*

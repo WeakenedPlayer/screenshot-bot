@@ -1,4 +1,4 @@
-import { ImageConverter } from './image';
+import { ImageProvider } from './image';
 import { Observable } from 'rxjs';
 import { JpegOutputOption } from './jpeg-output-option';
 import * as Path from 'path';
@@ -6,29 +6,41 @@ import * as Path from 'path';
 const sharp = require( 'sharp');
 const extension = '.jpg';
 
-export class JpegConverter implements ImageConverter {
-    private observable: Observable<string>;
-    
-    constructor( private readonly workDir: string, private options: JpegOutputOption ) {}
-    
-    private dstPath( src: string ): string {
-        let ext: string = Path.extname( src );
-        let base: string = Path.basename( src, ext ) + extension;
-        return Path.join( this.workDir, base );
+export interface JpegConverterOption {
+    workDirectory: string;
+    jpegOption?: JpegOutputOption
+}
+
+export class JpegConverter implements ImageProvider {
+    private imageObservable: Observable<string>;
+
+    constructor( private src: ImageProvider, private option$: Observable<JpegConverterOption> ) {
+        this.imageObservable = this.src.image$
+        .withLatestFrom( this.option$ )
+        .flatMap( ( [ src, option ] ) => {
+            // ファイル名
+            let ext: string = Path.extname( src );
+            let base: string = Path.basename( src, ext ) + extension;
+            let dst: string =  Path.join( option.workDirectory, base );
+            
+            // 変換後のファイル名を出力するObservable (shareでHotにする)
+            return Observable.create( observer => {
+                sharp( src )
+                .jpeg( option.jpegOption )
+                .toFile( dst, ( err, info ) => {
+                    if( !err ) {
+                        // Memo: 1回ごとに完了させる(うまくいくか不明)
+                        observer.next( dst );
+                        observer.complete();
+                    } else {
+                        observer.error( err );
+                    }
+                } );
+            } ).map( () => dst ).share();
+        } );
     }
     
-    convert( src: string ): Observable<string> {
-        return Observable.create( observer => {
-            let dst = this.dstPath( src );
-            sharp( src )
-            .jpeg( this.options )
-            .toFile( dst, ( err, info ) => {
-                if( !err ) {
-                    observer.next( dst );
-                } else {
-                    observer.error( err );
-                }
-            } );
-        } ); 
+    get image$(): Observable<string> {
+        return this.imageObservable;
     }
 }
