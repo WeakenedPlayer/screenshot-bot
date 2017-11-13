@@ -1,11 +1,6 @@
 import { ImageWatcher, JpegConverter, ImageProvider, JpegConverterOption, JpegOutputOption } from '../image';
 import { Subject, Subscription, Observable } from 'rxjs';
 
-export interface ImagePosterOption {
-    workDirectory: string;
-    jpegOption?: JpegOutputOption;
-}
-
 export class ImageSource implements ImageProvider {
     private watcher: ImageWatcher;
     private converter: JpegConverter;

@@ -3,6 +3,7 @@ import { JpegConverter, JpegConverterOption, ImageSource, ImageWatcher, ImagePos
 import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { srcDir1, srcDir2, tmpDir, token, channelId } from './constants';
 
+
 //Client
 let client = new Discord.Client();
 

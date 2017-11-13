@@ -11,11 +11,12 @@ export class Client {
     private ready: boolean;
     private busy: boolean;
     private connected: boolean;
-    private client: Discord.Client = null;
+    private _client: Discord.Client = null;
     private state: BehaviorSubject<ClientState> = new BehaviorSubject( new ClientState() );
 
     get state$(): Observable<ClientState> { return this.state.asObservable(); }
-
+    protected get client() { return this._client }
+    
     private onReadyListener: any;
     private events: { [name:string]: boolean } = {};
     
@@ -63,7 +64,7 @@ export class Client {
     // ########################################################################
     // ComponentがListenerを登録するのに使用する (onInitClientで使用すること)
     registerListener( event: string, callback: any ) {
-        this.client.on( event, callback );
+        this._client.on( event, callback );
         this.events[ event ] = true;
         // console.log( 'add listener: ' + event)
     }
@@ -88,12 +89,12 @@ export class Client {
     // ########################################################################
     // call inside constructor
     protected init() {
-        this.client = new Discord.Client();
+        this._client = new Discord.Client();
         this.registerListener( 'ready', ()=>{ this.onReady() } );
         this.registerListener( 'disconnect', ()=>{ this.onDisconnect() } );
         this.registerListener( 'resume', ()=>{ this.onResume() } );
         this.registerListener( 'reconnecting', ()=>{ this.onReconnecting() } );
-        this.onInitClient( this.client );
+        this.onInitClient( this._client );
         // init state
         this.busy = false;
         this.ready = false;
@@ -104,7 +105,7 @@ export class Client {
     destroy() {
         for( let event in this.events ) {
             // console.log( 'remove listener: ' + event );
-            this.client.removeAllListeners( event );
+            this._client.removeAllListeners( event );
         }
         this.onDestroyClient();
     }
@@ -116,7 +117,7 @@ export class Client {
         this.busy = true;
         this.updateState();
         // console.log( 'login started...');
-        return this.client.login( token );
+        return this._client.login( token );
     }
 
     logout(): Promise<void> {
@@ -127,7 +128,7 @@ export class Client {
         this.busy = true;
         this.updateState();
         this.destroy();
-        return this.client.destroy()
+        return this._client.destroy()
         .then( ()=>{
             this.init();
             return Promise.resolve();

@@ -1,46 +1,60 @@
+import * as Discord from 'discord.js'
 import { Observable, BehaviorSubject } from 'rxjs';
-import { ImagePoster } from '.';
-import { ScreenshotBotOption } from './screenshot-bot-option';
+import { ImagePoster, ImageSource } from '.';
+import { JpegConverterOption } from '../image';
 import { Bot } from '../bot';
 
+export { JpegConverterOption };
+
+// 投稿開始のたびに最後の画像が投稿されてしまう問題がある
+
 export class ScreenshotBot extends Bot {
-    private imagePoster: ImagePoster;
-    get image$() { return this.imagePoster.image$ }
+    private soruce: ImageSource;
+    private poster: ImagePoster;
 
-    private active: boolean;
-    private channelId: string;
-    private option: ScreenshotBotOption;
-    
-    private activeSubject = new BehaviorSubject<boolean>( false );
-    private channelIdSubject = new BehaviorSubject<string>( '' );
-    private optionSubject = new BehaviorSubject<ScreenshotBotOption>( new ScreenshotBotOption() ); 
-    
-    get active$() { return this.activeSubject.asObservable() }
-    get channelId$() { return this.channelIdSubject.asObservable() }
-    get option$() { return this.optionSubject.asObservable() }
+    // input observables
+    private filter$: BehaviorSubject<string>;
+    private gate$: BehaviorSubject<boolean>;
+    private option$: BehaviorSubject<JpegConverterOption>;
+    private channel$: BehaviorSubject<Discord.Channel>;
 
+    // output observables
+    get image$() { return this.soruce.image$ }
+    get post$() { return this.poster.post$ }
+    
     constructor(){
         super();
-        this.imagePoster = new ImagePoster( this );
+        // input observables
+        this.filter$  = new BehaviorSubject( '' );
+        this.option$  = new BehaviorSubject( new JpegConverterOption( '' ) );
+        this.channel$ = new BehaviorSubject( null );
+        this.gate$ = new BehaviorSubject( false );
+        
+        // image posting
+        this.soruce   = new ImageSource( this.filter$, this.option$, this.gate$ );
+        this.poster   = new ImagePoster( this.soruce, this.channel$ );
+
+        // initialize sub modules
         this.init();
     }
 
-    configure( option: ScreenshotBotOption ) {
-        this.imagePoster.configureWatcher( option.filter, option.workDir, option.jpegOption );
-        
-        this.optionSubject.next( option );
+    set filter( value: string ) {
+        this.filter$.next( value );
+    }
+
+    set option( value: JpegConverterOption ) {
+        this.option$.next( value );
     }
     
     startPostingTo( channelId: string ) {
-        this.imagePoster.startPostingTo( channelId );
-        
-        // state
-        this.activeSubject.next( true );
-        this.channelIdSubject.next( channelId );
+        let channel = this.client.channels.find( 'id', channelId );
+        if( channel ) {
+            this.channel$.next( channel );
+            this.gate$.next( true );
+        }
     }
     
     stopPostiong() {
-        this.imagePoster.stopPosting();
-        this.activeSubject.next( false );
+        this.gate$.next( false );
     }
 }
