@@ -7,20 +7,22 @@ export class ImageWatcher implements ImageProvider {
     private watcher$: Observable<string>;
     private lastFilter: string = '';
     constructor( private filter$: Observable<string> ) {
-        // Memo: 最後のObservable を共有できるよう shareReplay にしている。
+        // Memo: filter$ は Hot Observableでなくてはならない。
         this.watcher$ = this.filter$.flatMap( filter => {
-            console.log( 'Unwatch: ' + this.lastFilter );
+            console.log( '[image-watcher] Watching ' + filter );
             this.watcher.unwatch( this.lastFilter );
             this.watcher.watch( filter );
             this.lastFilter = filter;
             // Memo: Observable は 完了条件が成立しない限り購読が止まらないので、
             //       繰り返すと同じ購読が増えてしまう。
             //       ここでは、takeUntil で完了させるようにしている。
+            //       なお、 filter$ は Hot Observable でないと、購読した瞬間に止まってしまう。
             return this.watcher.add$.takeUntil( this.filter$ );
-        } ).shareReplay( 1 );
+        } );
     }
 
     get image$(): Observable<string> {
+        console.log( '[image-watcher] image$' );
         return this.watcher$;
     }
 }
