@@ -6,10 +6,13 @@ export class ImageWatcher implements ImageProvider {
     private watcher: Watcher = new Watcher('');
     private watcher$: Observable<string>;
     private lastFilter: string = '';
-    constructor( private filter$: Observable<string> ) {
-        // Memo: filter$ は Hot Observableでなくてはならない。
+    private filter$: Observable<string>;
+    constructor( filter$: Observable<string> ) {
+        // Hot Observableに変換
+        this.filter$ = filter$.share();
+
         this.watcher$ = this.filter$.flatMap( filter => {
-            console.log( '[image-watcher] Watching ' + filter );
+            // console.log( '[image-watcher] Watching ' + filter );
             this.watcher.unwatch( this.lastFilter );
             this.watcher.watch( filter );
             this.lastFilter = filter;
@@ -22,7 +25,7 @@ export class ImageWatcher implements ImageProvider {
     }
 
     get image$(): Observable<string> {
-        console.log( '[image-watcher] image$' );
+        // console.log( '[image-watcher] image$' );
         return this.watcher$;
     }
 }

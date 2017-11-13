@@ -17,7 +17,8 @@ export class JpegConverter implements ImageProvider {
 
     constructor( private src$: Observable<string>, option$: Observable<JpegConverterOption> ) {
         // Memo: option 最新値を何度も参照したいため、shareReplay で Cold化
-        this.option$ = option$.shareReplay( 1 );
+        //       src$ は特にHot/Coldの影響を受けないため処置しない 
+        this.option$ = option$.shareReplay( 1 );    
         
         this.imageObservable = this.src$
         .withLatestFrom( this.option$ )
@@ -29,7 +30,7 @@ export class JpegConverter implements ImageProvider {
             
             // 変換後のファイル名を出力するObservable
             return Observable.create( observer => {
-                console.log( '[jpeg-converter] convert: ' + src );
+                // console.log( '[jpeg-converter] convert: ' + src );
                 sharp( src )
                 .jpeg( option.jpegOption )
                 .toFile( dst, ( err, info ) => {
@@ -48,7 +49,7 @@ export class JpegConverter implements ImageProvider {
     }
     
     get image$(): Observable<string> {
-        console.log( '[jpeg-converter] image$' );
+        // console.log( '[jpeg-converter] image$' );
         return this.imageObservable;
     }
 }
