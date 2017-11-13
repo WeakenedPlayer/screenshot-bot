@@ -46,12 +46,16 @@ export class ScreenshotBot extends Bot {
         this.option$.next( value );
     }
     
-    startPostingTo( channelId: string ) {
-        let channel = this.client.channels.find( 'id', channelId );
+    set channelId( value: string ) {
+        let channel = this.client.channels.find( 'id', value );
+        console.log( channel );
         if( channel ) {
             this.channel$.next( channel );
-            this.gate$.next( true );
         }
+    }
+    
+    startPosting() {
+            this.gate$.next( true );
     }
     
     stopPostiong() {

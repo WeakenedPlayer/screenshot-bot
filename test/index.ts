@@ -10,6 +10,7 @@ let client = new ScreenshotBot();
 let toggle = false;
 
 client.login( token ).then( () => {
+    client.channelId = channelId;
     setInterval( ()=>{
         if( toggle ) {
             toggle = false;
@@ -17,7 +18,7 @@ client.login( token ).then( () => {
             console.log( '----------- Stop  --------------------------------------------' );
         } else {
             toggle = true;
-            client.startPostingTo( channelId );
+            client.startPosting();
             console.log( '----------- Start --------------------------------------------' );
         }
     }, 2000 );
