@@ -7,8 +7,8 @@ let toggle = false;
 
 let filter$ = new Subject<string>();
 let src$ = new ImageWatcher( filter$ );
-let option$: Observable<JpegConverterOption> = Observable.of( { workDirectory: tmpDir } ).shareReplay(1);
-let converter$ = new JpegConverter( src$, option$ );
+let option$: Observable<JpegConverterOption> = Observable.of( new JpegConverterOption( tmpDir ) ).shareReplay(1);
+let converter$ = new JpegConverter( src$.image$, option$ );
 
 setInterval( ()=>{
     if( toggle ) {
