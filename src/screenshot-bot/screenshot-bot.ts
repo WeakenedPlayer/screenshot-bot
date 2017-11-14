@@ -6,7 +6,7 @@ import { Bot } from '../bot';
 
 export { JpegConverterOption };
 
-// 投稿開始のたびに最後の画像が投稿されてしまう問題がある
+// 投稿開始のたびに最後の画像が投稿されてしまう問題がある 再発した
 
 export class ScreenshotBot extends Bot {
     private soruce: ImageSource;
