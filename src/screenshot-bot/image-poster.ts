@@ -3,6 +3,8 @@ import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 import { Client, ClientComponent } from '../client';
 import { ImageProvider } from '../image';
 
+import { logger } from '../log';
+
 export class ImagePoster {
     private channel$: Observable<Discord.Channel>;
     private postObservable: Observable<void>;
@@ -15,6 +17,7 @@ export class ImagePoster {
             if( channel && channel.type === 'text' ) {
                 // tscでエラーが出るのを防止するため、あえて "any" として扱う。
                 // TextChannel 以外は無視(エラーは出さない)
+                logger.log( '[image-poster] post' );
                 channel.send( '', { file: { attachment: image } } );                
             } 
         } );

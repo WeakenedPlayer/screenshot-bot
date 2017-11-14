@@ -1,9 +1,11 @@
 import { ImageProvider } from './image';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import * as Path from 'path';
 
 const sharp = require( 'sharp');
 const extension = '.jpg';
+
+import { logger } from '../log';
 
 export class JpegOutputOption {
     constructor(
@@ -24,12 +26,11 @@ export class JpegConverterOption {
 export class JpegConverter implements ImageProvider {
     private imageObservable: Observable<string>;
     private option$: Observable<JpegConverterOption>
-
+    
     constructor( private src$: Observable<string>, option$: Observable<JpegConverterOption> ) {
         // Memo: option 最新値を何度も参照したいため、shareReplay で Cold化
         //       src$ は特にHot/Coldの影響を受けないため処置しない 
         this.option$ = option$.shareReplay( 1 );    
-        
         this.imageObservable = this.src$
         .withLatestFrom( this.option$ )
         .flatMap( ( [ src, option ] ) => {
@@ -40,7 +41,7 @@ export class JpegConverter implements ImageProvider {
             
             // 変換後のファイル名を出力するObservable
             return Observable.create( observer => {
-                // console.log( '[jpeg-converter] convert: ' + src );
+                logger.log( '[jpeg-converter] convert: ' + src );
                 sharp( src )
                 .jpeg( option.jpegOption )
                 .toFile( dst, ( err, info ) => {
@@ -49,17 +50,16 @@ export class JpegConverter implements ImageProvider {
                         observer.next( dst );
                         observer.complete();
                     } else {
-                        observer.error( err );
+                        logger.log( '[jpeg-converter] Error\n' + err );
                     }
                 } );
             }, () => {
-                console.log( 'unsubscribe jpeg' );
+                logger.log( '[jpeg-converter] unsubscribe jpeg.' );
             } ).map( () => dst );
         } );
     }
     
     get image$(): Observable<string> {
-        // console.log( '[jpeg-converter] image$' );
         return this.imageObservable;
     }
 }

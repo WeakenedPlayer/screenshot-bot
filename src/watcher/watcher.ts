@@ -28,7 +28,6 @@ export class Watcher {
 
             // remove listener when unsubscribe
             return ( () => {
-                console.log( 'Watcher: Event removed.' );
                 this.watcher.removeListener( event, listener );
             } );
         } ).publish().refCount();
@@ -36,8 +35,7 @@ export class Watcher {
     
     constructor( private path: string ) {
         /* TENATIVE: この時点で監視を開始している。
-         * 一つのWatcherで1つの対象しか監視しない前提で作成する。(外部のFSWatcherを使うDIに変更すべきかも)
-         * */
+         * 一つのWatcherで1つの対象しか監視しない前提で作成する。 */
         this.watcher = watch( this.path, {
             ignoreInitial: true,
             followSymlinks: false,

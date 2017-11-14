@@ -32,4 +32,6 @@ client.startPosting();
 client.post$.catch( err => {
     console.log( err );
     return Observable.of( 1 );
-} ).subscribe( ()=> { console.log('heh')} );
+} ).subscribe();
+
+logger.log$.map( message => console.log( message ) ).subscribe();
