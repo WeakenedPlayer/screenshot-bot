@@ -6,7 +6,7 @@ import { Bot } from '../bot';
 
 export { JpegConverterOption };
 
-// 投稿開始のたびに最後の画像が投稿されてしまう問題がある →設定の影響
+// 投稿開始のたびに最後の画像が投稿されてしまう問題修正
 
 export class ScreenshotBot extends Bot {
     private soruce: ImageSource;
@@ -48,7 +48,6 @@ export class ScreenshotBot extends Bot {
     
     set channelId( value: string ) {
         let channel = this.client.channels.find( 'id', value );
-        console.log( channel );
         if( channel ) {
             this.channel$.next( channel );
         }
