@@ -12,7 +12,7 @@ export class ImagePoster {
         this.channel$ = channel$.shareReplay( 1 );
 
         this.postObservable = this.src.image$
-        .combineLatest( channel$ )
+        .withLatestFrom( channel$ )
         .map( ( [ image, channel ]: [ string, any ] ) => {
             if( channel && channel.type === 'text' ) {
                 // tscでエラーが出るのを防止するため、あえて "any" として扱う。
