@@ -53,11 +53,15 @@ export class ScreenshotBot extends Bot {
         }
     }
     
+    set isActive( value: boolean ) {
+        this.gate$.next( value );
+    }
+    
     startPosting() {
-            this.gate$.next( true );
+        this.isActive = true;
     }
     
     stopPostiong() {
-        this.gate$.next( false );
+        this.isActive = false;
     }
 }

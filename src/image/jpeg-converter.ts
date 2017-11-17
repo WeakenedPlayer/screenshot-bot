@@ -5,8 +5,6 @@ import * as Path from 'path';
 const sharp = require( 'sharp');
 const extension = '.jpg';
 
-import { logger } from '../log';
-
 export class JpegOutputOption {
     constructor(
             public quality: number = 80,
@@ -41,7 +39,6 @@ export class JpegConverter implements ImageProvider {
             
             // 変換後のファイル名を出力するObservable
             return Observable.create( observer => {
-                logger.log( '[jpeg-converter] convert: ' + src );
                 sharp( src )
                 .jpeg( option.jpegOption )
                 .toFile( dst, ( err, info ) => {
@@ -50,11 +47,9 @@ export class JpegConverter implements ImageProvider {
                         observer.next( dst );
                         observer.complete();
                     } else {
-                        logger.log( '[jpeg-converter] Error\n' + err );
+                        console.warn( 'unable to convert.' );
                     }
                 } );
-            }, () => {
-                logger.log( '[jpeg-converter] unsubscribe jpeg.' );
             } ).map( () => dst );
         } );
     }

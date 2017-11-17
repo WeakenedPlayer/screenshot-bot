@@ -3,7 +3,6 @@ import { ScreenshotBot, JpegConverterOption } from '../src';
 import { BehaviorSubject, Subscription, Observable } from 'rxjs';
 import { srcDir1, srcDir2, tmpDir1, tmpDir2, token, channelId } from './constants';
 
-import { logger } from '../src/log';
 
 //Client
 let client = new ScreenshotBot();
@@ -30,5 +29,3 @@ client.login( token ).then( () => {
 
 client.startPosting();
 client.post$.subscribe();
-
-logger.log$.map( message => console.log( message ) ).subscribe();

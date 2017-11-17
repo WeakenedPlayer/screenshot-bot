@@ -2,8 +2,6 @@ import { Observable } from 'rxjs';
 import { Watcher } from '../watcher';
 import { ImageProvider } from './image';
 
-import { logger } from '../log';
-
 export class ImageWatcher implements ImageProvider {
     private watcher: Watcher = new Watcher('');
     private watcher$: Observable<string>;
@@ -14,8 +12,6 @@ export class ImageWatcher implements ImageProvider {
         this.filter$ = filter$.share();
 
         this.watcher$ = this.filter$.flatMap( filter => {
-            logger.log( '[image-watcher] Watching ' + filter );
-            
             this.watcher.unwatch( this.lastFilter );
             this.watcher.watch( filter );
             this.lastFilter = filter;
