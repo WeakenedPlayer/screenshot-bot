@@ -1,5 +1,5 @@
 import { ImageProvider } from './image';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Observer } from 'rxjs';
 import * as Path from 'path';
 
 const sharp = require( 'sharp');
@@ -18,7 +18,9 @@ export class JpegOutputOption {
 
 export class JpegConverterOption {
     constructor( public readonly workDirectory: string = '',
-                 public readonly jpegOption: JpegOutputOption = new JpegOutputOption() ) {}
+                 public readonly jpegOption: JpegOutputOption = new JpegOutputOption(),
+                 public readonly maxRetry = 5,
+                 public readonly retryInterval = 200 ) {}
 }
 
 export class JpegConverter implements ImageProvider {
@@ -38,19 +40,31 @@ export class JpegConverter implements ImageProvider {
             let dst: string =  Path.join( option.workDirectory, base );
             
             // 変換後のファイル名を出力するObservable
-            return Observable.create( observer => {
+            let retryCount = 0;
+            let convert$: Observable<string> = Observable.create( ( observer: Observer<Observable<string>> ) => {
                 sharp( src )
                 .jpeg( option.jpegOption )
                 .toFile( dst, ( err, info ) => {
                     if( !err ) {
                         // Memo: 1回ごとに完了させる
-                        observer.next( dst );
+                        observer.next( Observable.of( dst ) );
                         observer.complete();
                     } else {
-                        console.warn( 'unable to convert.' );
+                        if( retryCount < option.maxRetry ) {
+                            // ディレイ付きリトライ
+                            retryCount++;
+                            console.warn( 'Unable to convert \"' + src + '\". Retry: ' + retryCount + '/' + option.maxRetry );
+                            observer.next( Observable.timer( option.retryInterval ).flatMap( () => convert$ ) );
+                        } else {
+                            // リトライNG
+                            console.warn( 'Unable to convert. Exceed retry count of ' + option.maxRetry );
+                            observer.complete();
+                        }
                     }
                 } );
-            } ).map( () => dst );
+            } ).flatMap( dst => dst );
+            
+            return convert$;
         } );
     }
     

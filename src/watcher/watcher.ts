@@ -2,6 +2,8 @@ import { FSWatcher, watch } from 'chokidar';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 export class Watcher {
+    static STABILITY_THRESHOLD = 2000;
+    static POLL_INTERVAL = 500;
     private watcher: FSWatcher = null;
 
     // 変更ごとのObservable
@@ -37,7 +39,7 @@ export class Watcher {
         } ).publish().refCount();
     }
     
-    constructor( private path: string ) {
+    constructor( private path: string, stabilityThreshold: number = Watcher.STABILITY_THRESHOLD, pollInterval: number = Watcher.POLL_INTERVAL ) {
         // TENATIVE: この時点で監視を開始している。
         // 一つのWatcherで1つの対象しか監視しない前提で作成する。
         this.watcher = watch( this.path, {
@@ -45,8 +47,8 @@ export class Watcher {
             followSymlinks: false,
             persistent: true, // 継続的にモニタする
             awaitWriteFinish: {
-                stabilityThreshold: 1000,
-                pollInterval: 200
+                stabilityThreshold: stabilityThreshold,
+                pollInterval: pollInterval
               },
         } );
         

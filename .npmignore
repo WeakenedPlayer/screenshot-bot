@@ -1,6 +1,7 @@
 tsconfig.json
 src
 test
+dist-test
 .project
 .settings
 package-lock.json

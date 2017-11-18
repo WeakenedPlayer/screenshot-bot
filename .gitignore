@@ -10,4 +10,5 @@ Thumbs.db
 # Dist #
 /test/constants.ts
 /dist/*
+/dist-test/*
 /type/*
