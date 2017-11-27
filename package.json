@@ -23,8 +23,11 @@
     "@types/chokidar": "^1.7.3",
     "chokidar": "^1.7.0",
     "discord.js": "^11.2.1",
+    "jpeg-js": "^0.3.3",
+    "pngjs": "^3.3.1",
     "rxjs": "~5.4.0",
-    "sharp": "^0.18.4"
+    "sharp": "^0.18.4",
+    "tga": "^1.0.3"
   },
   "devDependencies": {
     "typescript": "^2.6.1"
