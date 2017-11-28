@@ -1,4 +1,5 @@
 import { ImageProvider } from './image';
+import { ImageProcessor, ImageProcessorOption } from './image-processor';
 import { Observable, Subject, Observer } from 'rxjs';
 import * as Path from 'path';
 
@@ -16,59 +17,36 @@ export class JpegOutputOption {
             public force: boolean = true ) {}    
 }
 
-export class JpegConverterOption {
+export class JpegConverterOption extends ImageProcessorOption {
     constructor( public readonly workDirectory: string = '',
                  public readonly jpegOption: JpegOutputOption = new JpegOutputOption(),
                  public readonly maxRetry = 5,
-                 public readonly retryInterval = 200 ) {}
+                 public readonly retryInterval = 200 ) {
+        super( maxRetry, retryInterval );
+    }
 }
 
-export class JpegConverter implements ImageProvider {
-    private imageObservable: Observable<string>;
-    private option$: Observable<JpegConverterOption>
-    
-    constructor( private src$: Observable<string>, option$: Observable<JpegConverterOption> ) {
-        // Memo: option 最新値を何度も参照したいため、shareReplay で Cold化
-        //       src$ は特にHot/Coldの影響を受けないため処置しない 
-        this.option$ = option$.shareReplay( 1 );    
-        this.imageObservable = this.src$
-        .withLatestFrom( this.option$ )
-        .flatMap( ( [ src, option ] ) => {
-            // ファイル名
-            let ext: string = Path.extname( src );
-            let base: string = Path.basename( src, ext ) + extension;
-            let dst: string =  Path.join( option.workDirectory, base );
-            
-            // 変換後のファイル名を出力するObservable
-            let retryCount = 0;
-            let convert$: Observable<string> = Observable.create( ( observer: Observer<Observable<string>> ) => {
-                sharp( src )
-                .jpeg( option.jpegOption )
-                .toFile( dst, ( err, info ) => {
-                    if( !err ) {
-                        // Memo: 1回ごとに完了させる
-                        observer.next( Observable.of( dst ) );
-                        observer.complete();
-                    } else {
-                        if( retryCount < option.maxRetry ) {
-                            // ディレイ付きリトライ
-                            retryCount++;
-                            console.warn( 'Unable to convert \"' + src + '\". Retry: ' + retryCount + '/' + option.maxRetry );
-                            observer.next( Observable.timer( option.retryInterval ).flatMap( () => convert$ ) );
-                        } else {
-                            // リトライNG
-                            console.warn( 'Unable to convert. Exceed retry count of ' + option.maxRetry );
-                            observer.complete();
-                        }
-                    }
-                } );
-            } ).flatMap( dst => dst );
-            
-            return convert$;
-        } );
+export class JpegConverter extends ImageProcessor {
+    constructor( src$: Observable<string>, option$: Observable<JpegConverterOption> ) {
+        super( src$, option$ );
     }
     
-    get image$(): Observable<string> {
-        return this.imageObservable;
+    protected process( src: string, option: JpegConverterOption ): Promise<string> {
+        let ext: string = Path.extname( src );
+        let base: string = Path.basename( src, ext ) + extension;
+        let dst: string =  Path.join( option.workDirectory, base );
+    
+        return new Promise( ( resolve, reject ) => { 
+            sharp( src )
+            .jpeg( option.jpegOption )
+            .toFile( dst, ( err, info ) => {
+                if( !err ) {
+                    console.log( dst );
+                    resolve( dst );
+                } else {
+                    reject( err );
+                }
+            } );
+        } );
     }
 }

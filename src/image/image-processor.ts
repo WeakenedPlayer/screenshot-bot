@@ -1,16 +1,23 @@
 import { Observable, Observer } from 'rxjs';
 import { ImageProvider } from './image';
 
-
+/* ############################################################################
+ * オプション
+ * ######################################################################### */
 export class ImageProcessorOption {
     constructor( public readonly maxRetry: number,
                  public readonly retryInterval: number ) {}
 }
 
+/* ############################################################################
+ * リトライ付きで画像変換を行うクラス(具体的な処理は隠蔽)
+ * ######################################################################### */
 export abstract class ImageProcessor implements ImageProvider {
     private imageObservable: Observable<string>;
+    private option$: Observable<ImageProcessorOption>;
     get image$(): Observable<string> { return this.imageObservable }
-    constructor( private src$: Observable<string>, private option$: Observable<ImageProcessorOption> ) {
+    constructor( private src$: Observable<string>, option$: Observable<ImageProcessorOption> ) {
+        this.option$ = option$.shareReplay( 1 );
         this.imageObservable = this.src$
         .withLatestFrom( this.option$ )
         .flatMap( ( [ src, option ] ) => {
