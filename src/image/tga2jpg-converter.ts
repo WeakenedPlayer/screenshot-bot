@@ -8,21 +8,21 @@ const fs = require('fs');
 const TGA = require('tga');
 const JPG = require('jpeg-js');
 
-export class TgaConverterOption extends ImageProcessorOption {
-    constructor( public readonly quality = 80,
-                 public readonly workDirectory: string = '',
+export class Tga2JpgConverterOption extends ImageProcessorOption {
+    constructor( public readonly workDirectory: string = '',
+                 public readonly quality = 80,
                  public readonly maxRetry = 5,
                  public readonly retryInterval = 200 ) {
         super( maxRetry, retryInterval );
     }
 }
 
-export class TgaConverter extends ImageProcessor {
-    constructor( src$: Observable<string>, option$: Observable<TgaConverterOption> ) {
+export class Tga2JpgConverter extends ImageProcessor {
+    constructor( src$: Observable<string>, option$: Observable<Tga2JpgConverterOption> ) {
         super( src$, option$ );
     }
     
-    protected process( src: string, option: TgaConverterOption ): Promise<string> {
+    protected process( src: string, option: Tga2JpgConverterOption ): Promise<string> {
         let ext: string = Path.extname( src );
         let base: string = Path.basename( src, ext ) + extension;
         let dst: string =  Path.join( option.workDirectory, base );
