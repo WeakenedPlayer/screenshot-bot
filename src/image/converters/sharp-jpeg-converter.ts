@@ -1,5 +1,5 @@
-import { ImageProvider } from './image';
-import { ImageProcessor, ImageProcessorOption } from './image-processor';
+import { ImageProvider } from '../image';
+import { ImageConverter, ImageConverterOption } from './image-converter';
 import { Observable, Subject, Observer } from 'rxjs';
 import * as Path from 'path';
 
@@ -17,7 +17,7 @@ export class JpegOutputOption {
             public force: boolean = true ) {}    
 }
 
-export class JpegConverterOption extends ImageProcessorOption {
+export class JpegConverterOption extends ImageConverterOption {
     constructor( public readonly workDirectory: string = '',
                  public readonly jpegOption: JpegOutputOption = new JpegOutputOption(),
                  public readonly maxRetry = 5,
@@ -26,12 +26,12 @@ export class JpegConverterOption extends ImageProcessorOption {
     }
 }
 
-export class JpegConverter extends ImageProcessor {
+export class JpegConverter extends ImageConverter {
     constructor( src$: Observable<string>, option$: Observable<JpegConverterOption> ) {
         super( src$, option$ );
     }
     
-    protected process( src: string, option: JpegConverterOption ): Promise<string> {
+    protected convert( src: string, option: JpegConverterOption ): Promise<string> {
         let ext: string = Path.extname( src );
         let base: string = Path.basename( src, ext ) + extension;
         let dst: string =  Path.join( option.workDirectory, base );

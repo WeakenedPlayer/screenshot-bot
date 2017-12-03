@@ -1,5 +1,5 @@
-import { ImageProvider } from './image';
-import { ImageProcessor, ImageProcessorOption } from './image-processor';
+import { ImageProvider } from '../image';
+import { ImageConverter, ImageConverterOption } from './image-converter';
 import { Observable, Subject, Observer } from 'rxjs';
 import * as Path from 'path';
 const extension = '.jpg';
@@ -8,7 +8,7 @@ const fs = require('fs');
 const TGA = require('tga');
 const JPG = require('jpeg-js');
 
-export class Tga2JpgConverterOption extends ImageProcessorOption {
+export class Tga2JpgConverterOption extends ImageConverterOption {
     constructor( public readonly workDirectory: string = '',
                  public readonly quality = 80,
                  public readonly maxRetry = 5,
@@ -17,12 +17,12 @@ export class Tga2JpgConverterOption extends ImageProcessorOption {
     }
 }
 
-export class Tga2JpgConverter extends ImageProcessor {
+export class Tga2JpgConverter extends ImageConverter {
     constructor( src$: Observable<string>, option$: Observable<Tga2JpgConverterOption> ) {
         super( src$, option$ );
     }
     
-    protected process( src: string, option: Tga2JpgConverterOption ): Promise<string> {
+    protected convert( src: string, option: Tga2JpgConverterOption ): Promise<string> {
         let ext: string = Path.extname( src );
         let base: string = Path.basename( src, ext ) + extension;
         let dst: string =  Path.join( option.workDirectory, base );
@@ -37,7 +37,7 @@ export class Tga2JpgConverter extends ImageProcessor {
                     buffetrType: 'rgba'
                 };
                 
-                let jpg = JPG.encode( rawImageData,5 );
+                let jpg = JPG.encode( rawImageData, option.quality );
                 let stream = fs.createWriteStream( dst );
                 stream.write( jpg.data, option.quality );
                 resolve( dst );
