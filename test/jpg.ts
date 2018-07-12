@@ -3,6 +3,7 @@ const JPG = require('jpeg-js');
 import { RawImageData, ImageHandler } from './common'; 
 
 export class JpgHandler implements ImageHandler {
+    constructor( private option: any = { quality: 80 } ) {}
     read( src: string ): Promise<RawImageData> {
         return new Promise( ( resolve, reject ) => {
             try {
@@ -13,12 +14,12 @@ export class JpgHandler implements ImageHandler {
             }            
         } );
     }
-    write( raw: RawImageData, dst: string, option: any = { quality: 80 } ): Promise<void> {
+    write( raw: RawImageData, dst: string ): Promise<string> {
         return new Promise( ( resolve, reject ) => {
             try {
-                let img = JPG.encode( raw, option.quality );
+                let img = JPG.encode( raw, this.option.quality );
                 fs.writeFileSync( dst, img.data );
-                resolve();
+                resolve( dst );
             } catch( err ) {
                 reject( err );
             };

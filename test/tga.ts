@@ -17,12 +17,12 @@ export class TgaHandler implements ImageHandler {
             }            
         } );
     }
-    write( raw: RawImageData, dst: string, option: any = { quality: 80 } ): Promise<void> {
+    write( raw: RawImageData, dst: string ): Promise<string> {
         return new Promise( ( resolve, reject ) => {
             try {
                 let img = TGA.createTgaBuffer( raw.width, raw.height, raw.data );
                 fs.writeFileSync( dst, img );
-                resolve();
+                resolve( dst );
             } catch( err ) {
                 reject( err );
             };
