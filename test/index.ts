@@ -18,15 +18,29 @@ const option: X2YConverterOption = {
     tmpDir: 'tmp'
 }
 
-let poster = new ImagePosterService(
-    new ImageWatcher(),
+let watcher = new ImageWatcher();
+let poster = new DummyPoster();
+
+let imagePoster = new ImagePosterService(
+    watcher,
     createPng2JpgConverter( option, 80 ),
-    new DummyPoster()
+    poster
 );
 
-poster.start( 'tmp\\*.png' )
+//watcher.start( 'tmp\\*.png' )
+//.then( () => {
+//    console.log( 'watching')
+//    return imagePoster.start()
+//} ).then( () => {
+//    console.log( 'started' );
+//    // reverse
+//    return watcher.start( 'tmp\\*.png' );
+//} ).then( () => {
+//    console.log( 'started' );
+//} );
+imagePoster.start();
+
+watcher.start( 'tmp\\*.png' )
 .then( () => {
-    console.log( 'started' );
+    console.log( 'watching' )
 } );
-
-

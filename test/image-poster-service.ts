@@ -36,25 +36,19 @@ export class ImagePosterService {
         return ( ( this.subscription === null ) || this.subscription.closed );
     }
     
-    start( filter: string ): Promise<void> {
+    start(): void {
         if( !this.isInactive() ) {
-            return Promise.reject( 'Already started.' );
+            throw new Error( 'Already started.' );
         }
-
-        return this.src.start( filter )
-        .then( ( img$ ) => {
-            this.subscription = this.conversion$.subscribe();
-        } );
+        this.subscription = this.conversion$.subscribe();
     }
     
-    close(): Promise<void> {
+    close(): void {
         if( this.isInactive() ) {
-            return Promise.reject( 'Already stopped.' );
+            throw new Error( 'Already stopped.' );
         }
 
-        return this.src.stop().then( () => {
-            this.subscription.unsubscribe();
-            this.subscription = null;
-        } );
+        this.subscription.unsubscribe();
+        this.subscription = null;
     }
 }
