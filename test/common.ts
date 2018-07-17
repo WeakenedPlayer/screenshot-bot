@@ -8,6 +8,7 @@ export interface RawImageData {
 
 export interface ImageHandler {
     read( src: string ): Promise<RawImageData>;
+    convert( img: RawImageData ): Promise<Buffer>;
     write( img: RawImageData, dst: string ): Promise<string>;
 }
 

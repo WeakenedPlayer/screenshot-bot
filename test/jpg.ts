@@ -14,17 +14,23 @@ export class JpgHandler implements ImageHandler {
             }            
         } );
     }
-    write( raw: RawImageData, dst: string ): Promise<string> {
+    
+    convert( raw: RawImageData ): Promise<Buffer> {
         return new Promise( ( resolve, reject ) => {
             try {
                 let img = JPG.encode( raw, this.option.quality );
-                fs.writeFileSync( dst, img.data );
-                resolve( dst );
+                resolve( img.data );
             } catch( err ) {
                 reject( err );
             };
         } );
     }
+    
+    write( raw: RawImageData, dst: string ): Promise<string> {
+        return this.convert( raw )
+        .then( img => {
+            fs.writeFileSync( dst, img );
+            return dst;
+        } );
+    }
 }
-
-

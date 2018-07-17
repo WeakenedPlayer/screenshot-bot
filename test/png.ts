@@ -14,16 +14,22 @@ export class PngHandler implements ImageHandler {
             }            
         } );
     }
-    write( raw: RawImageData, dst: string ): Promise<string> {
+    
+    convert( raw: RawImageData ): Promise<Buffer> {
         return new Promise( ( resolve, reject ) => {
-            try {
-                let buffer = PNG.sync.write( raw, this.option );
-                fs.writeFileSync( dst, buffer );
-                resolve( dst );
-            } catch( err ) {
-                reject( err );
-            };
-        } );
+        try {
+            let buffer = PNG.sync.write( raw, this.option );
+            resolve( buffer );
+        } catch( err ) {
+            reject( err );
+        } } );
+    }
+    
+    write( raw: RawImageData, dst: string ): Promise<string> {
+        return this.convert( raw )
+        .then( buffer => {
+            fs.writeFileSync( dst, buffer );
+            return dst;
+       } );
     }
 }
-
