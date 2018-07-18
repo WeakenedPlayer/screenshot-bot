@@ -8,7 +8,7 @@ export interface JpgHandlerOption {
 }
 
 export function createJpgHandler( quality: number = 80 ) {
-    return new JPG( { quality: quality } );
+    return new JpgHandler( { quality: quality } );
 }
 
 export class JpgHandler implements ImageHandler {

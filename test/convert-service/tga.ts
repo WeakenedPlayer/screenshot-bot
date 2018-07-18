@@ -7,11 +7,11 @@ export interface TgaHandlerOption {
 }
 
 export function createTgaHandler() {
-    return new TGA();
+    return new TgaHandler();
 }
 
 export class TgaHandler implements ImageHandler {
-    constructor( private option: TgaHandlerOption ) {}
+    constructor() {}
     read( src: string ): Promise<RawImageData> {
         return new Promise( ( resolve, reject ) => {
             try {

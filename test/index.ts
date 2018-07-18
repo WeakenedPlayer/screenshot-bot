@@ -1,13 +1,22 @@
-import { DiscordClientService } from './discord-service';
-import { ConvertService } from './convert-service';
+import { DiscordPoster, PostService } from './post-service';
+import { ConvertService, createJpgHandler, createPngHandler } from './convert-service';
 import { TOKEN, CHANNEL } from './secret';
 
-let client = new DiscordClientService();
+let client = new DiscordPoster();
 let converter = new ConvertService();
 
-client.login( TOKEN )
+converter.setInput( createPngHandler() );
+converter.setOutput( createJpgHandler() );
+
+client.setToken( TOKEN );
+
+console.log( client.connected );
+
+client.connect()
 .then( () => {
-    return converter.convert( './tmp/screenshot_20180709-23-19-43.png' ).then( img => client.postImage( CHANNEL, img ) );
+    client.setChannel( CHANNEL );
+    console.log( client.connected );
+    return converter.convert( './tmp/screenshot_20180709-23-19-43.png' ).then( img => client.postImage( img ) );
 } ).then( () => {
-    client.logout();
+    client.disconnect();
 } );

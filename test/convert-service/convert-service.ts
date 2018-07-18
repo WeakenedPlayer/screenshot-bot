@@ -12,19 +12,23 @@ export class ConvertService {
         this.input = null;
         this.output = null;
     }
-    
+
     setInput( handler: ImageHandler ): void {
         this.input = handler;
     }
-    
+
     setOutput( handler: ImageHandler ): void {
         this.output = handler;
     }
-    
+
     setRetryCount( count: number ): void {
         this.retryCount = count;
     }
-    
+
+    setRetryInterval( interval: number ): void {
+        this.retryInterval = interval;
+    }
+
     convert( src: string ): Promise<Buffer>{        
         let retry = this.retryCount;
         let interval = this.retryInterval;
