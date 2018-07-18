@@ -12,10 +12,6 @@ export interface ImageHandler {
     write( img: RawImageData, dst: string ): Promise<string>;
 }
 
-export interface ImagePoster {
-    post( src: string ): Promise<void>;
-}
-
 export function toRetryPromise<T>( factory: () => Promise<T>, waitRetry: () => Promise<boolean> ): Promise<T> {
     return factory()
     .catch( err => {

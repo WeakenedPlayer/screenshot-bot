@@ -2,8 +2,16 @@ const fs = require('fs');
 const PNG = require('pngjs').PNG;
 import { RawImageData, ImageHandler } from './common'; 
 
+//no option
+export interface PngHandlerOption {
+}
+
+export function createPngHandler() {
+    return new PNG();
+}
+
 export class PngHandler implements ImageHandler {
-    constructor( private option: any = {} ) {}
+    constructor( private option: PngHandlerOption ) {}
     read( src: string ): Promise<RawImageData> {
         return new Promise( ( resolve, reject ) => {
             try {

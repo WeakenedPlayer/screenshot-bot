@@ -2,8 +2,16 @@ const fs = require('fs');
 var TGA = require('tga');
 import { RawImageData, ImageHandler } from './common'; 
 
+//no option
+export interface TgaHandlerOption {
+}
+
+export function createTgaHandler() {
+    return new TGA();
+}
+
 export class TgaHandler implements ImageHandler {
-    constructor( option: any ) {}
+    constructor( private option: TgaHandlerOption ) {}
     read( src: string ): Promise<RawImageData> {
         return new Promise( ( resolve, reject ) => {
             try {

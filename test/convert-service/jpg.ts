@@ -2,8 +2,17 @@ const fs = require('fs');
 const JPG = require('jpeg-js');
 import { RawImageData, ImageHandler } from './common'; 
 
+//no option
+export interface JpgHandlerOption {
+    quality: number;
+}
+
+export function createJpgHandler( quality: number = 80 ) {
+    return new JPG( { quality: quality } );
+}
+
 export class JpgHandler implements ImageHandler {
-    constructor( private option: any = { quality: 80 } ) {}
+    constructor( private option: JpgHandlerOption ) {}
     read( src: string ): Promise<RawImageData> {
         return new Promise( ( resolve, reject ) => {
             try {
