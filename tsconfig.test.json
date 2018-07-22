@@ -11,6 +11,6 @@
     "lib": [ "dom", "es6" ],
     "typeRoots": [ "node_modules/@types" ]
   },
-  "include": [ "src/**/*", "test/**/*" ],
+  "include": [ "test/**/*" ],
   "exclude": [ "node_modules", "dist", "dist-test" ]
 }

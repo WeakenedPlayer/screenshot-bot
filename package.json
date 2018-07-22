@@ -1,13 +1,13 @@
 {
   "scope": "@weakenedplayer",
   "name": "@weakenedplayer/screenshot-bot",
-  "version": "0.1.1-beta.2",
+  "version": "0.2.0-beta.0",
   "description": "Discord client for screenshot posting.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "tsc -p tsconfig.test.json && node dist-test\\test"
+    "test": "tsc -p tsconfig.test.json && node dist-test\\index.js"
   },
   "repository": {
     "type": "git",
@@ -20,16 +20,17 @@
   "author": "WeakenedPlayer",
   "license": "MIT",
   "dependencies": {
-    "@types/chokidar": "^1.7.3",
-    "chokidar": "^1.7.0",
-    "discord.js": "^11.2.1",
-    "jpeg-js": "^0.3.3",
+    "@weakenedplayer/watcher": "latest",
+    "discord.js": "^11.3.2",
     "pngjs": "^3.3.1",
-    "rxjs": "~5.4.0",
-    "sharp": "^0.18.4",
+    "postinstall-build": "^5.0.1",
+    "rxjs": "^6.0.0",
     "tga": "^1.0.3"
   },
-  "devDependencies": {
+  "buildDependencies": {
     "typescript": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^10.5.2"
   }
 }

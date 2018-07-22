@@ -1,7 +1,12 @@
-tsconfig.json
-src
+node_modules
+tmp
 test
+dist
 dist-test
-.project
-.settings
+
+tsconfig.test.json
 package-lock.json
+
+# System Files
+.DS_Store
+Thumbs.db

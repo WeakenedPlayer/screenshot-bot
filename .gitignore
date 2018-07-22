@@ -1,14 +1,35 @@
-# OS generated files #
-.DS_Store
-ehthumbs.db
-Icon?
-Thumbs.db
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# Node Files #
+# compiled output
+/dist
+/dist-test
+/tmp
+/test/secret
+
+# dependencies
 /node_modules
 
-# Dist #
-/test/constants.ts
-/dist/*
-/dist-test/*
-/type/*
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# e2e
+/e2e/*.js
+/e2e/*.map
+
+# System Files
+.DS_Store
+Thumbs.db
