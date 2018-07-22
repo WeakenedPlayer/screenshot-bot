@@ -25,16 +25,16 @@ let poster = new DiscordPoster( channelProvider );
 //core
 let bot = new ScreenshotBot( watcher, converter, poster );
 
-console.log( 'token ' + TOKEN );
+console.log( 'Token: ' + TOKEN );
 
 clientProvider.connect( TOKEN )
 .catch( err => {
-    console.error( 'Cannot connect Discord Server.' );
+    console.error( 'Cannot connect to Discord Server.' );
 } )
 .then( () => {
     channelProvider.selectById( CHANNEL );
     bot.start().then( () => {
-        console.log( 'test' );
+        console.log( 'Start' );
     } );
 } );
 
@@ -42,6 +42,6 @@ process.on('SIGINT', () => {
     bot.stop().then( () => {
         return clientProvider.disconnect();
    } ).then( () => {
-       console.log( 'closed' );
+       console.log( 'Stop' );
    } );
 } );

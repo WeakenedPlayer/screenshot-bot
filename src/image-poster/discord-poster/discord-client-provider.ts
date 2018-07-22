@@ -18,9 +18,7 @@ export class DiscordClientProvider {
         this._client.on( 'resume', () => this._connected = true );
         
         return this._client.login( token )
-        .then( token => {
-            console.log( 'hi' )
-        } );
+        .then( token => {} );
     }
     
     disconnect(): Promise<void> {

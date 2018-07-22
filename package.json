@@ -6,8 +6,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "test": "tsc -p tsconfig.test.json && node dist-test\\index.js"
+		"build": "tsc -p tsconfig.json",
+		"test": "tsc -p tsconfig.test.json && node dist-test/index.js",
+		"postinstall": "postinstall-build dist",
+		"beta-release": "npm publish --tag beta --access public",
+		"release": "npm publish --tag latest --access public"
   },
   "repository": {
     "type": "git",
