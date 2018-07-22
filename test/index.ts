@@ -1,22 +1,47 @@
-import { DiscordPoster, PostService } from './post-service';
-import { ConvertService, createJpgHandler, createPngHandler } from './convert-service';
-import { TOKEN, CHANNEL } from './secret';
+import {
+    SimpleWatcher, 
+    ImageConverter, PngHandler, JpgHandler, 
+    DiscordPoster, DiscordClientProvider, DiscordChannelProvider,
+    ScreenshotBot
+} from '../dist';
 
-let client = new DiscordPoster();
-let converter = new ConvertService();
+import { CHANNEL, TOKEN } from './secret';
 
-converter.setInput( createPngHandler() );
-converter.setOutput( createJpgHandler() );
+// components
+let watcher = new SimpleWatcher( {
+    filter: './test/*.png',
+    interval: 200,
+    threshold: 2000
+} );
 
-client.setToken( TOKEN );
+let converter = new ImageConverter();
+converter.setInput( new PngHandler() );
+converter.setOutput( new JpgHandler( { quality: 100 } ) );
 
-console.log( client.connected );
+let clientProvider = new DiscordClientProvider();
+let channelProvider = new DiscordChannelProvider( clientProvider );
+let poster = new DiscordPoster( channelProvider );
 
-client.connect()
+//core
+let bot = new ScreenshotBot( watcher, converter, poster );
+
+console.log( 'token ' + TOKEN );
+
+clientProvider.connect( TOKEN )
+.catch( err => {
+    console.error( 'Cannot connect Discord Server.' );
+} )
 .then( () => {
-    client.setChannel( CHANNEL );
-    console.log( client.connected );
-    return converter.convert( './tmp/screenshot_20180709-23-19-43.png' ).then( img => client.postImage( img ) );
-} ).then( () => {
-    client.disconnect();
+    channelProvider.selectById( CHANNEL );
+    bot.start().then( () => {
+        console.log( 'test' );
+    } );
+} );
+
+process.on('SIGINT', () => {
+    bot.stop().then( () => {
+        return clientProvider.disconnect();
+   } ).then( () => {
+       console.log( 'closed' );
+   } );
 } );
