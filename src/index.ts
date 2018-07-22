@@ -1,6 +1,4 @@
-import { Observable } from 'rxjs';
-export * from './client'; 
-export * from './image';
-export * from './watcher';
-export * from './bot'; 
-export * from './screenshot-bot'; 
+export * from './image-poster';
+export * from './image-loader';
+export * from './image-watcher';
+export * from './screenshot-bot';
