@@ -7,14 +7,10 @@ import { flatMap } from 'rxjs/operators';
 import * as path from 'path';
 
 export class ScreenshotBot {
-    private post$: Observable<void>;
     private subscription: Subscription = null;
     constructor( private watcher: ImageWatcher,
                  private loader: ImageLoader,
                  private poster: ImagePoster ){
-        this.post$ = this.watcher.image$.pipe(
-                flatMap( src => from( this.post( src ) ) )
-        );
     }
     
     private post( src: string ): Promise<void> {
@@ -37,8 +33,11 @@ export class ScreenshotBot {
     
     start(): Promise<void> {
         return this.watcher.start().then( () => {
+            let post$ = this.watcher.image$.pipe(
+                    flatMap( src => from( this.post( src ) ) )
+            );
             if( !this.subscription || this.subscription.closed ) {
-                this.subscription = this.post$.subscribe();
+                this.subscription = post$.subscribe();
             }
         } );
     }
