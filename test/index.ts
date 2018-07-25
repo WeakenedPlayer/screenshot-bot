@@ -1,11 +1,25 @@
 import {
     SimpleWatcher, 
     ImageConverter, PngHandler, JpgHandler, 
-    DiscordPoster, DiscordClientProvider, DiscordChannelProvider,
+    DiscordPoster, DiscordClientService, DiscordChannelProvider,
     ScreenshotBot
 } from '../dist';
 
+import { TextChannel } from 'discord.js';
 import { CHANNEL, TOKEN } from './secret';
+
+class DiscordChannel implements DiscordChannelProvider {
+    private channel: TextChannel = null;
+    constructor( private clientService: DiscordClientService ) {}
+    
+    setChannelId( id: string ): void {
+        this.channel = this.clientService.getChannelById( id ); 
+    }
+    
+    getChannel(): TextChannel {
+        return this.channel;
+    }
+}
 
 // components
 let watcher = new SimpleWatcher( {
@@ -18,21 +32,22 @@ let converter = new ImageConverter();
 converter.setInput( new PngHandler() );
 converter.setOutput( new JpgHandler( { quality: 100 } ) );
 
-let clientProvider = new DiscordClientProvider();
-let channelProvider = new DiscordChannelProvider( clientProvider );
-let poster = new DiscordPoster( channelProvider );
+let clientService = new DiscordClientService();
+let channel = new DiscordChannel( clientService );
+let poster = new DiscordPoster( channel );
 
 //core
 let bot = new ScreenshotBot( watcher, converter, poster );
 
 console.log( 'Token: ' + TOKEN );
 
-clientProvider.connect( TOKEN )
+
+clientService.connect( TOKEN )
 .catch( err => {
     console.error( 'Cannot connect to Discord Server.' );
 } )
 .then( () => {
-    channelProvider.selectById( CHANNEL );
+    channel.setChannelId( CHANNEL );
     bot.start().then( () => {
         console.log( 'Start' );
     } );
@@ -40,7 +55,7 @@ clientProvider.connect( TOKEN )
 
 process.on('SIGINT', () => {
     bot.stop().then( () => {
-        return clientProvider.disconnect();
+        return clientService.disconnect();
    } ).then( () => {
        console.log( 'Stop' );
    } );

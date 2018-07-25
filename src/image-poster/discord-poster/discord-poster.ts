@@ -6,7 +6,7 @@ export class DiscordPoster implements ImagePoster {
     constructor( private provider: DiscordChannelProvider ) {}
     
     post( message: string ): Promise<void> {
-        let channel = this.provider.channel;
+        let channel = this.provider.getChannel();
         if( !channel ) {
             throw new Error( 'Channel is not specified.' );
         }
@@ -15,7 +15,7 @@ export class DiscordPoster implements ImagePoster {
     }
     
     postImage( image: Buffer, message: string = '', filename?: string ): Promise<void> {
-        let channel = this.provider.channel;
+        let channel = this.provider.getChannel();
         if( !channel ) {
             throw new Error( 'Channel is not specified.' );
         }
