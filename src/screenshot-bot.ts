@@ -31,23 +31,19 @@ export class ScreenshotBot {
         return basename;
     }
     
-    start(): Promise<void> {
-        return this.watcher.start().then( () => {
-            let post$ = this.watcher.image$.pipe(
-                    flatMap( src => from( this.post( src ) ) )
-            );
-            if( !this.subscription || this.subscription.closed ) {
-                this.subscription = post$.subscribe();
-            }
-        } );
+    start(): void {
+        let post$ = this.watcher.image$.pipe(
+                flatMap( src => from( this.post( src ) ) )
+        );
+        if( !this.subscription || this.subscription.closed ) {
+            this.subscription = post$.subscribe();
+        }
     }
     
-    stop(): Promise<void> {
-        return this.watcher.stop().then( () => {
-            if( this.subscription && !this.subscription.closed ) {
-                this.subscription.unsubscribe();
-                this.subscription = null;
-            }
-        } )
+    stop(): void {
+        if( this.subscription && !this.subscription.closed ) {
+            this.subscription.unsubscribe();
+            this.subscription = null;
+        }
     }
 }

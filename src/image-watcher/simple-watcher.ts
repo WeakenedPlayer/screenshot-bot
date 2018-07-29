@@ -1,33 +1,49 @@
-import { Observable } from 'rxjs';
-import { share } from 'rxjs/operators';
+import { Observable, BehaviorSubject, Subject } from 'rxjs';
+import { share, flatMap } from 'rxjs/operators';
 import { Watcher, WatcherOption } from '@weakenedplayer/watcher';
 import { ImageWatcher } from './image-watcher';
 import * as path from 'path';
 
-export interface ImageWatcherOption {
-    filter: string;
+export interface ImageWatcherParameter {
     interval: number;
     threshold: number;
 }
 
+const defaultParam: ImageWatcherParameter = {
+    interval: 200,
+    threshold: 2000
+}
+
 export class SimpleWatcher implements ImageWatcher {
-    private watcher: Watcher;
-    private filter: string;
-    constructor( private readonly option: ImageWatcherOption ) {
-        this.filter = this.option.filter.split( path.sep ).join( '/' );
-        this.watcher = new Watcher( { pollInterval: this.option.interval, stabilityThreshold: this.option.threshold } );
+    private watcher: Watcher = null;
+    private imageSubject: BehaviorSubject<Observable<string>>;
+    private imageObservable: Observable<string>;
+    constructor() {
+        this.imageSubject = new BehaviorSubject( new Subject() );
+        this.imageObservable = this.imageSubject.pipe( flatMap( subject => subject ), share() );
     }
     
-    start(): Promise<void> {
-        return this.watcher.watch( this.filter );
+    watch( filter: string, option: ImageWatcherParameter = defaultParam ): Promise<void> {
+        if( this.watcher ) {
+            this.watcher.unwatch();
+        }
+        this.watcher = new Watcher();
+        
+        let normalizedFilter = filter.split( path.sep ).join( '/' );
+        return this.watcher.watch( normalizedFilter, { pollInterval: option.interval, stabilityThreshold: option.threshold } ).then( () => {
+            this.imageSubject.next( this.watcher.add$ );
+        } );
     }
     
-    stop(): Promise<void> {
-        this.watcher.unwatch();
+    unwatch(): Promise<void> {
+        if( this.watcher ) {
+            this.watcher.unwatch();
+            this.watcher = null;
+        }
         return Promise.resolve();
     }
-    
+
     get image$(): Observable<string> {
-        return this.watcher.add$.pipe( share() );
+        return this.imageObservable;
     }
 }

@@ -21,12 +21,15 @@ class DiscordChannel implements DiscordChannelProvider {
     }
 }
 
-// components
-let watcher = new SimpleWatcher( {
-    filter: './test/*.png',
+const option = {
     interval: 200,
     threshold: 2000
-} );
+};
+
+const FILTER = 'e:/ps2/Screenshots/*.png';
+
+// components
+let watcher = new SimpleWatcher();
 
 let converter = new ImageConverter();
 converter.setInput( new PngHandler() );
@@ -42,21 +45,21 @@ let bot = new ScreenshotBot( watcher, converter, poster );
 console.log( 'Token: ' + TOKEN );
 
 
+
 clientService.connect( TOKEN )
 .catch( err => {
     console.error( 'Cannot connect to Discord Server.' );
 } )
 .then( () => {
     channel.setChannelId( CHANNEL );
-    bot.start().then( () => {
-        console.log( 'Start' );
-    } );
+    bot.start();
+    watcher.watch( FILTER, option );
 } );
 
 process.on('SIGINT', () => {
-    bot.stop().then( () => {
-        return clientService.disconnect();
-   } ).then( () => {
+    watcher.unwatch();
+    bot.stop();
+    return clientService.disconnect().then( () => {
        console.log( 'Stop' );
    } );
 } );

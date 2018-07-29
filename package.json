@@ -1,16 +1,16 @@
 {
   "scope": "@weakenedplayer",
   "name": "@weakenedplayer/screenshot-bot",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Discord client for screenshot posting.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-		"build": "tsc -p tsconfig.json",
-		"test": "tsc -p tsconfig.test.json && node dist-test/index.js",
-		"postinstall": "postinstall-build dist",
-		"beta-release": "npm publish --tag beta --access public",
-		"release": "npm publish --tag latest --access public"
+    "build": "tsc -p tsconfig.json",
+    "test": "tsc -p tsconfig.test.json && node dist-test/index.js",
+    "postinstall": "postinstall-build dist",
+    "beta-release": "npm publish --tag beta --access public",
+    "release": "npm publish --tag latest --access public"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,9 @@
   "author": "WeakenedPlayer",
   "license": "MIT",
   "dependencies": {
-    "@weakenedplayer/watcher": "latest",
+    "@weakenedplayer/watcher": "0.0.3",
     "discord.js": "^11.3.2",
+    "jpeg-js": "^0.3.4",
     "pngjs": "^3.3.1",
     "postinstall-build": "^5.0.1",
     "rxjs": "^6.0.0",
