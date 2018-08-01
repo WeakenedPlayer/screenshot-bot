@@ -1,7 +1,7 @@
 {
   "scope": "@weakenedplayer",
   "name": "@weakenedplayer/screenshot-bot",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Discord client for screenshot posting.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

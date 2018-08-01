@@ -1,10 +1,10 @@
 import {
-    SimpleWatcher, 
-    ImageConverter, PngHandler, JpgHandler, 
+    SimpleWatcher, PngHandler, JpgHandler, 
     DiscordPoster, DiscordClientService, DiscordChannelProvider,
     ScreenshotBot
 } from '../dist';
 
+import { ImageConverter } from './image-converter'; 
 import { TextChannel } from 'discord.js';
 import { CHANNEL, TOKEN } from './secret';
 
@@ -33,18 +33,18 @@ let watcher = new SimpleWatcher();
 
 let converter = new ImageConverter();
 converter.setInput( new PngHandler() );
-converter.setOutput( new JpgHandler( { quality: 100 } ) );
+converter.setOutput( new JpgHandler() );
 
 let clientService = new DiscordClientService();
 let channel = new DiscordChannel( clientService );
 let poster = new DiscordPoster( channel );
 
+
+let jpgOption = { quality: 100 };
 //core
 let bot = new ScreenshotBot( watcher, converter, poster );
 
 console.log( 'Token: ' + TOKEN );
-
-
 
 clientService.connect( TOKEN )
 .catch( err => {

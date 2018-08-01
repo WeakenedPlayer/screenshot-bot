@@ -7,12 +7,13 @@ export interface JpgHandlerOption {
     quality: number;
 }
 
-export function createJpgHandler( quality: number = 80 ) {
-    return new JpgHandler( { quality: quality } );
-}
+const defaultOption: JpgHandlerOption = { quality: 80 };
 
 export class JpgHandler implements ImageHandler {
-    constructor( private option: JpgHandlerOption ) {}
+    private option: JpgHandlerOption;
+    constructor( option: JpgHandlerOption = defaultOption ) {
+        this.option = { ...defaultOption, ...option };
+    }
     read( src: string ): Promise<RawImageData> {
         return new Promise( ( resolve, reject ) => {
             try {

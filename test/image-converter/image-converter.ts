@@ -1,13 +1,8 @@
-import { RetryImageLoader } from '../image-loader';
-import { ImageHandler } from '../image-handler';
+import { RetryImageLoader, ImageHandler } from '../../dist';
 
 export class ImageConverter extends RetryImageLoader {
-    private input: ImageHandler;
-    private output: ImageHandler;
-    constructor() {
+    constructor( private input: ImageHandler = null, private output: ImageHandler = null ) {
         super();
-        this.input = null;
-        this.output = null;
     }
 
     setInput( handler: ImageHandler ): void {
@@ -17,7 +12,7 @@ export class ImageConverter extends RetryImageLoader {
     setOutput( handler: ImageHandler ): void {
         this.output = handler;
     }
-
+    
     protected _load( src: string ): Promise<Buffer> {
         if( this.input === null || this.output === null ) {
             throw new Error( 'Image handler is null.' );
